@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CODEX — AI Code Generator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);font-family:Inter,sans-serif;padding:20px;color:#fff}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:3px}
+.g{background:rgba(255,255,255,.07);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:16px}
+.btn-main{background:linear-gradient(135deg,#667eea,#764ba2);border:0;border-radius:12px;color:#fff;cursor:pointer;font-size:15px;font-weight:600;padding:14px;transition:.3s;width:100%;font-family:inherit}
+.btn-main:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 32px rgba(102,126,234,.5)}.btn-main:disabled{opacity:.5;cursor:not-allowed}
+.lang-btn,.tmpl,.ico-btn,.tab-btn{font-family:inherit;cursor:pointer}
+.lang-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.65);font-size:13px;padding:7px 13px}
+.lang-btn:hover,.tmpl:hover,.ico-btn:hover{background:rgba(255,255,255,.14);color:#fff}.lang-btn.on{background:linear-gradient(135deg,rgba(102,126,234,.4),rgba(118,75,162,.4));border-color:rgba(102,126,234,.6);color:#fff}
+.tmpl{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.6);font-size:12px;padding:5px 11px}
+.tab-btn{background:transparent;border:0;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:13px;font-weight:500;padding:10px 18px}.tab-btn.on{border-bottom-color:#667eea;color:#fff}
+.ico-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.75);font-size:12px;padding:5px 12px}
+.hist{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;cursor:pointer;padding:12px;transition:.2s;margin-bottom:8px}.hist:hover{background:rgba(255,255,255,.08);border-color:rgba(102,126,234,.4)}
+textarea{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:14px;line-height:1.6;outline:0;padding:14px;resize:none;width:100%;font-family:inherit}textarea:focus{border-color:rgba(102,126,234,.55)}textarea::placeholder{color:rgba(255,255,255,.22)}
+.toggle{width:44px;height:24px;background:rgba(255,255,255,.14);border-radius:12px;cursor:pointer;position:relative}.toggle.on{background:linear-gradient(135deg,#4ade80,#22d3ee)}.toggle:after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.3s}.toggle.on:after{transform:translateX(20px)}
+.badge{border-radius:6px;font-size:11px;font-weight:600;padding:2px 8px;display:inline-block}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.lbl{color:rgba(255,255,255,.38);font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+.spin{animation:spin .8s linear infinite;display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.fi{animation:fadeIn .35s ease}@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}.cursor{animation:blink .9s infinite;color:#a78bfa}
+@media(max-width:850px){body{padding:10px}#layout{grid-template-columns:1fr!important}.right{display:block}.header h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div style="max-width:1120px;margin:0 auto">
+<header class="header" style="text-align:center;margin-bottom:26px">
+<div style="display:inline-flex;align-items:center;gap:12px">
+<div style="width:48px;height:48px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px">⚡</div>
+<div style="text-align:right"><h1 style="font-size:28px;line-height:1">CODEX</h1><p style="color:rgba(255,255,255,.3);font-size:12px;margin-top:3px">AI Code Generator — أي كود في العالم</p></div>
+</div>
+</header>
+
+<div id="layout" style="display:grid;grid-template-columns:1fr 308px;gap:16px">
+<main>
+<section class="g" style="padding:12px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+<div style="display:flex;align-items:center;gap:10px"><span>🛡️</span><span style="color:rgba(255,255,255,.7);font-size:13px">وضع الحماية</span><div id="toggle" class="toggle"></div><span id="secureText" style="color:#4ade80;font-size:12px"></span></div>
+<div style="display:flex;align-items:center;gap:8px"><span id="remainingText" style="color:rgba(255,255,255,.38);font-size:12px"></span><div id="dots"></div></div>
+</section>
+
+<section class="g" style="padding:20px;margin-bottom:12px">
+<p class="lbl">اللغة / الإطار</p><div id="languages" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px"></div>
+<p class="lbl">قوالب سريعة</p><div id="templates" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px"></div>
+<div style="position:relative;margin-bottom:14px"><textarea id="prompt" rows="4" placeholder="اكتب ما تريد بناؤه... مثلاً: Build a travel agency website with search, booking form, and hotel cards"></textarea><span style="position:absolute;bottom:10px;left:12px;color:rgba(255,255,255,.18);font-size:11px" id="counter">0 حرف · Ctrl+Enter للإرسال</span></div>
+<div id="alert"></div>
+<button id="generate" class="btn-main">⚡ توليد الكود</button>
+</section>
+
+<section id="output" class="g fi" style="display:none">
+<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:0 16px">
+<div><button class="tab-btn on" data-tab="code">💻 الكود</button><button class="tab-btn" data-tab="preview">👁️ معاينة</button><button class="tab-btn" data-tab="info">ℹ️ معلومات</button></div>
+<div id="actions" style="display:flex;align-items:center;gap:8px"></div>
+</div>
+<div id="panel"></div>
+</section>
+</main>
+
+<aside class="right">
+<section class="g" style="padding:18px;margin-bottom:14px"><p class="lbl">🔒 نظام الحماية</p><div id="security"></div></section>
+<section class="g" style="padding:18px;margin-bottom:14px"><p class="lbl">📜 السجل (<span id="historyCount">0</span>)</p><div id="history"><p style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:22px 0">لم يتم توليد أي كود بعد</p></div></section>
+<section class="g" style="padding:18px"><p class="lbl">🚀 طريقة رفع الموقع</p>
+<div style="background:rgba(0,0,0,.2);border-radius:9px;padding:10px 13px;margin-bottom:8px"><b>🟩 Netlify Drop</b><p style="color:rgba(255,255,255,.38);font-size:11px;margin-top:3px">اسحب ملف HTML مباشرة</p></div>
+<div style="background:rgba(0,0,0,.2);border-radius:9px;padding:10px 13px;margin-bottom:8px"><b>▲ Vercel</b><p style="color:rgba(255,255,255,.38);font-size:11px;margin-top:3px">اربط GitHub أو ارفع يدوياً</p></div>
+<div style="background:rgba(0,0,0,.2);border-radius:9px;padding:10px 13px"><b>⚫ GitHub Pages</b><p style="color:rgba(255,255,255,.38);font-size:11px;margin-top:3px">ارفع في repo وفعّل Pages</p></div>
+<p style="color:rgba(255,255,255,.28);font-size:11px;margin-top:12px;line-height:1.6;border-top:1px solid rgba(255,255,255,.06);padding-top:10px">💡 هذا الإصدار ملف HTML واحد ويمكن رفعه مباشرة إلى GitHub Pages.</p>
+</section>
+</aside>
+</div>
+</div>
+
+<script>
+const BLOCKED=['malware','virus','ransomware','keylogger','phishing','botnet','rootkit','spyware','trojan','ddos','exploit kit'];
+const RATE_LIMIT=5,RATE_WINDOW=60000;
+const LANGUAGES=[['html','🌐 HTML + CSS + JS'],['react','⚛️ React'],['vue','💚 Vue.js'],['nextjs','▲ Next.js'],['python','🐍 Python'],['nodejs','🟢 Node.js'],['flutter','📱 Flutter'],['ts','🔷 TypeScript']];
+const TEMPLATES=[
+['🏨 سياحة','Build a luxury travel agency website with animated hero, destination cards with hover effects, tour packages with prices, booking form with date picker, testimonials, and footer. Glassmorphism design with smooth animations.'],
+['📊 Dashboard','Build an admin dashboard with sidebar navigation, stats cards (revenue, users, orders, growth rate), animated line chart, donut chart, and data table with search, filter, and pagination.'],
+['🛒 متجر','Build an e-commerce product page with image gallery slider, product details, size/color selector, animated add to cart button, product reviews, and related products grid.'],
+['💬 Chat UI','Build a real-time chat app UI with sidebar contacts, chat window with message bubbles, typing indicator animation, emoji button, file attachment, and online status.'],
+['🔐 تسجيل دخول','Build a beautiful auth page with login/signup tabs, animated form validation, social login buttons (Google, GitHub, Apple), remember me, and password strength meter.'],
+['👤 Portfolio','Build a creative developer portfolio with particle hero animation, about section, animated skill bars, projects grid with modal details, timeline, and contact form.'],
+['📝 Blog','Build a modern blog homepage with hero featured article, article cards with read time, category filter tabs, author cards, newsletter signup, and dark mode toggle.'],
+['📅 Calendar','Build an interactive calendar app with month/week/day views, click-to-create events, color-coded events, drag to resize, and mini agenda sidebar.']
+];
+let lang='html',secure=false,code='',tab='code',history=[],stamps=[];
+const $=id=>document.getElementById(id);
+LANGUAGES.forEach(x=>{const b=document.createElement('button');b.className='lang-btn'+(x[0]===lang?' on':'');b.textContent=x[1];b.onclick=()=>{lang=x[0];renderLang()};$('languages').appendChild(b)});
+TEMPLATES.forEach(x=>{const b=document.createElement('button');b.className='tmpl';b.textContent=x[0];b.onclick=()=>{$('prompt').value=x[1];updateCounter();$('prompt').focus()};$('templates').appendChild(b)});
+function renderLang(){[...$('languages').children].forEach((b,i)=>b.classList.toggle('on',LANGUAGES[i][0]===lang))}
+function remaining(){const n=Date.now();stamps=stamps.filter(t=>n-t<RATE_WINDOW);return Math.max(0,RATE_LIMIT-stamps.length)}
+function updateCounter(){$('counter').textContent=$('prompt').value.length+' حرف · Ctrl+Enter للإرسال';renderSecurity()}
+$('prompt').addEventListener('input',updateCounter);$('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.ctrlKey)generate()});
+$('toggle').onclick=()=>{secure=!secure;$('toggle').classList.toggle('on',secure);$('secureText').textContent=secure?'OWASP مُفعّل ✓':'';renderSecurity()};
+function renderSecurity(){const r=remaining();$('remainingText').textContent=r+'/'+RATE_LIMIT+' طلبات متبقية';$('dots').innerHTML=Array.from({length:5},(_,i)=>'<span class="dot" style="background:'+(i<r?'#4ade80':'rgba(255,255,255,.14)')+';margin:0 2px"></span>').join('');
+const safe=isSafe($('prompt').value);$('security').innerHTML=[
+['🚫','فلتر المحتوى',safe?'نشط':'محظور',safe],['⏱️','Rate Limiting',r>1?r+'/5 متبقي':r+'/5 متبقي',r>0],['🛡️','OWASP Mode',secure?'مُفعّل':'معطّل',secure],['🖼️','Sandbox Preview','مُفعّل',true],['✅','Input Validation','نشط',true],['🔑','XSS Protection','نشط',true]
+].map(x=>'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><span style="color:rgba(255,255,255,.62);font-size:13px">'+x[0]+' '+x[1]+'</span><span class="badge" style="background:'+(x[3]?'rgba(74,222,128,.13)':'rgba(248,113,113,.13)')+';color:'+(x[3]?'#4ade80':'#f87171')+'">'+x[2]+'</span></div>').join('')}
+function isSafe(t){t=t.toLowerCase();return !BLOCKED.some(k=>t.includes(k))}
+function alertMsg(msg,type='error'){$('alert').innerHTML='<div style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:10px;color:rgba(255,255,255,.8);font-size:13px;padding:10px 14px;margin-bottom:14px">'+msg+'</div>'}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+async function generate(){
+const p=$('prompt').value.trim();if(!p)return;
+if(!isSafe(p)){alertMsg('🛡️ طلب محظور لأسباب أمنية — لا يمكن توليد كود ضار');return}
+const r=remaining();if(!r){alertMsg('⏱️ تجاوزت الحد المسموح (5 طلبات/دقيقة) — انتظر قليلاً');return}
+stamps.push(Date.now());$('alert').innerHTML='';$('generate').disabled=true;$('generate').innerHTML='<span class="spin"></span> جاري توليد الكود...';$('output').style.display='block';code='';renderPanel();
+const system='You are CODEX — elite AI code generator. OUTPUT: Raw code ONLY. No markdown. No explanations. QUALITY: Complete, production-ready modern code. DESIGN: beautiful UI, animations, glassmorphism or modern design, fully responsive.';
+const sec=secure?'\\nSECURITY MODE: Add XSS protection, input sanitization, CSRF tokens, SQL injection prevention, rate limiting, secure headers, and OWASP Top 10 mitigations.':'';
+try{
+const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:4000,system,messages:[{role:'user',content:'Framework: '+lang+'\\nBuild: '+p+sec}]})});
+const data=await res.json();if(data.error)throw new Error(data.error.message);
+code=(data.content?.[0]?.text||'// Error generating code').replace(/```[\\w-]*\\n?/gi,'').replace(/```/g,'').trim();
+history.unshift({prompt:p,lang,code,time:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}),lines:code.split('\\n').length,secure});history=history.slice(0,9);renderHistory();
+let i=0;const speed=code.length>2000?45:22;const iv=setInterval(()=>{i=Math.min(i+speed,code.length);renderPanel();if(i>=code.length){clearInterval(iv);}},10);
+}catch(e){alertMsg('❌ خطأ في الاتصال: '+e.message)}
+finally{$('generate').disabled=false;$('generate').textContent='⚡ توليد الكود';renderSecurity()}
+}
+function renderPanel(){
+const shown=code;const lines=shown?shown.split('\\n').length:0;
+$('actions').innerHTML=shown?'<span style="color:rgba(255,255,255,.28);font-size:12px">'+lines+' سطر</span><button class="ico-btn" onclick="copyCode()">📋 نسخ</button><button class="ico-btn" onclick="downloadCode()">⬇️ تحميل</button>':'';
+let body='';
+if(tab==='code')body='<div style="padding:18px"><pre style="background:rgba(0,0,0,.45);border-radius:10px;color:#e2e8f0;font:13px/1.75 JetBrains Mono,monospace;max-height:540px;overflow:auto;padding:18px;white-space:pre-wrap;word-break:break-word;margin:0">'+escapeHtml(shown)+(shown?'':'⚡ جاري كتابة الكود<span class="cursor">▌</span>')+'</pre></div>';
+else if(tab==='preview')body=lang==='html'&&shown?'<div style="padding:18px"><div style="background:#fff;border-radius:12px;overflow:hidden"><iframe srcdoc="'+escapeAttr(shown)+'" style="width:100%;height:500px;border:0" sandbox="allow-scripts allow-forms"></iframe></div></div>':'<p style="color:rgba(255,255,255,.35);text-align:center;padding:40px">المعاينة متاحة لـ HTML فقط</p>';
+else body='<div style="padding:18px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+[['📄 الملف','codex.'+({html:'html',react:'jsx',vue:'vue',nextjs:'tsx',python:'py',nodejs:'js',flutter:'dart',ts:'ts'})[lang]],['📏 الأسطر',lines+' سطر'],['🔤 الأحرف',shown.length.toLocaleString()],['🌐 اللغة',lang.toUpperCase()],['🔒 الحماية',secure?'OWASP مُفعّل ✓':'قياسية'],['✅ الحالة','مكتمل ✓']].map(x=>'<div style="background:rgba(0,0,0,.2);border-radius:9px;padding:11px 14px"><p style="color:rgba(255,255,255,.38);font-size:11px;margin-bottom:4px">'+x[0]+'</p><p>'+x[1]+'</p></div>').join('')+'</div></div>';
+$('panel').innerHTML=body;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab))
+}
+function escapeAttr(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+function copyCode(){navigator.clipboard.writeText(code)}
+function downloadCode(){const ext={html:'html',react:'jsx',vue:'vue',nextjs:'tsx',python:'py',nodejs:'js',flutter:'dart',ts:'ts'}[lang]||'txt';const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([code],{type:'text/plain'}));a.download='codex.'+ext;a.click();URL.revokeObjectURL(a.href)}
+document.querySelectorAll('.tab-btn').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;renderPanel()});
+function renderHistory(){$('historyCount').textContent=history.length;$('history').innerHTML=history.length?history.map((h,i)=>'<div class="hist" onclick="loadHistory('+i+')"><div style="display:flex;justify-content:space-between"><span class="badge" style="background:rgba(102,126,234,.2);color:#a5b4fc">'+h.lang.toUpperCase()+'</span><span style="color:rgba(255,255,255,.28);font-size:11px">'+h.time+'</span></div><p style="color:rgba(255,255,255,.55);font-size:12px;margin-top:6px">'+escapeHtml(h.prompt)+'</p><p style="color:rgba(255,255,255,.22);font-size:11px;margin-top:4px">'+h.lines+' سطر</p></div>').join(''):'<p style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:22px 0">لم يتم توليد أي كود بعد</p>'}
+function loadHistory(i){const h=history[i];$('prompt').value=h.prompt;lang=h.lang;secure=h.secure;code=h.code;renderLang();renderPanel();$('output').style.display='block';updateCounter()}
+renderSecurity();
+</script>
+</body>
+</html>
